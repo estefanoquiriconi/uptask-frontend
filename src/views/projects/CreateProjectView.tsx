@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { useMutation } from '@tanstack/react-query';
+
 import ProjectForm from '@/components/projects/ProjectForm';
 import { ProjectFormData } from '@/types';
 import { createProject } from '@/api/ProjectAPI';
-import { toast } from 'react-toastify';
 
 export default function CreateProjectView() {
   const navigate = useNavigate();
@@ -20,20 +22,23 @@ export default function CreateProjectView() {
     formState: { errors },
   } = useForm({ defaultValues: initialValues });
 
-  const onSubmit = async (data: ProjectFormData) => {
-    const response = await createProject(data);
-    if (response?.status !== 201) {
-      toast.warning('Algo salió mal, intenta nuevamente.');
-      return;
-    }
+  const { mutate } = useMutation({
+    mutationFn: createProject,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      navigate('/');
+    },
+  });
 
-    toast.success('Proyecto creado');
-    navigate('/');
-  };
+  const onSubmit = (data: ProjectFormData) => mutate(data);
+
   return (
     <>
       <div className='max-w-3xl mx-auto'>
-        <h1 className='text-5xl font-black'>Crear Proyecto</h1>
+        <h1 className='text-5xl font-black'>Crear proyecto</h1>
         <p className='text-2xl font-light text-gray-500 mt-5'>
           Llena el siguiente formulario para crear un proyecto
         </p>
@@ -41,7 +46,7 @@ export default function CreateProjectView() {
           <Link
             to={'/'}
             className='bg-purple-500 hover:bg-purple-600 px-10 py-3 text-white text-xl font-bold cursor-pointer transition-colors'>
-            Volver a Proyectos
+            Volver a proyectos
           </Link>
         </nav>
         <form
