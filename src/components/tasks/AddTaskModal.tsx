@@ -10,7 +10,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import TaskForm from './TaskForm';
 import { TaskFormData } from '@/types';
 import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createTask } from '@/api/TaskAPI';
 import { toast } from 'react-toastify';
 
@@ -34,9 +34,11 @@ export default function AddTaskModal() {
     formState: { errors },
   } = useForm({ defaultValues: initialValue });
 
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: createTask,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['editProject'] });
       toast.success(data.message);
       reset();
       setIsSubmitting(false);
@@ -99,7 +101,9 @@ export default function AddTaskModal() {
 
                   <p className='text-lg md:text-xl font-medium text-gray-600 mb-6'>
                     Llena el formulario y crea {''}
-                    <span className='text-fuchsia-600 font-bold'>una tarea</span>
+                    <span className='text-fuchsia-600 font-bold'>
+                      una tarea
+                    </span>
                   </p>
 
                   <form
@@ -115,7 +119,7 @@ export default function AddTaskModal() {
                       disabled={isSubmitting}
                       className='bg-fuchsia-600 hover:bg-fuchsia-700 w-full p-3 text-white uppercase font-bold cursor-pointer transition-colors rounded-lg shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center'>
                       {isSubmitting ? (
-                        <span className="inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></span>
+                        <span className='inline-block h-5 w-5 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]'></span>
                       ) : (
                         'Crear tarea'
                       )}
