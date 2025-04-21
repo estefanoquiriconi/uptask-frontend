@@ -14,7 +14,7 @@ export default function ProjectForm({ register, errors }: ProjectFormProps) {
         <label
           htmlFor='projectName'
           className='text-sm uppercase font-bold'>
-          Nombre del Proyecto 
+          Nombre del Proyecto
         </label>
         <input
           id='projectName'

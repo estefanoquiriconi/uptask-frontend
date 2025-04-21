@@ -24,7 +24,7 @@ const statusTranslations: { [key: string]: string } = {
   underReview: 'En revisión',
   completed: 'Completado',
 };
-        
+
 const borderColor: { [key: string]: string } = {
   pending: 'border-t-slate-400',
   onHold: 'border-t-red-400',
